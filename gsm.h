@@ -184,6 +184,7 @@ typedef struct
   uint8_t           lock;
   uint8_t           error;  
   uint8_t           signal;
+  uint16_t          battery;
   gsm_status_t      status;
   atc_t             atc;
   uint8_t           buffer[_ATC_RXSIZE - 16];
@@ -213,6 +214,7 @@ bool            gsm_power(bool on_off);
 bool            gsm_lock(uint32_t timeout_ms);
 void            gsm_unlock(void);
 
+bool		 				gsm_getBatteryVoltage(void);
 bool            gsm_setDefault(void);
 bool            gsm_registered(void);
 bool            gsm_setDefault(void);

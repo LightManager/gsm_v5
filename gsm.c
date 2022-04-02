@@ -460,6 +460,9 @@ void gsm_loop(void)
 #endif
     //  --- gprs check
 
+    //	+++ Battery Check
+    gsm_getBatteryVoltage();
+    //	--- Battery Check
 #endif
   }
   //  --- 10s timer ######################
@@ -949,5 +952,37 @@ bool gsm_ussd(char *command, char *answer, uint16_t sizeOfAnswer, uint8_t waitSe
     }
   }
 }
+
+//###############################################################################################################
+bool gsm_getBatteryVoltage(void)
+{
+  if (gsm_lock(10000) == false)
+  {
+    gsm_printf("[GSM] gsm_getBatteryPersent() failed!\r\n");
+    return false;
+  }
+  char str[32];
+  int16_t p1;
+  if (gsm_command("AT+CBC\r\n", 1000, str, sizeof(str), 2, "\r\n+CBC:", "\r\nERROR\r\n") != 1)
+  {
+    gsm_printf("[GSM] gsm_getBatteryPersent() failed!\r\n");
+    gsm_unlock();
+    return 0;
+  }
+  if (sscanf(str, "\r\n+CBC: %*d,%*d,%hd\r\n", &p1) != 1)
+  {
+    gsm_printf("[GSM] gsm_getBatteryPersent() failed!\r\n");
+    gsm_unlock();
+    return 0;
+  }
+	gsm.battery = p1;
+
+  gsm_printf("[GSM] gsm_getBatteryPersent() done\r\n");
+  gsm_unlock();
+	return 1;
+}
+
+//###############################################################################################################
+
 //###############################################################################################################
 
